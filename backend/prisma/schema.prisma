@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+
+// --- MODEL UNTUK MANAJEMEN USER & ROLE ---
+
+// Model untuk Role (Admin, Cashier, Employee)
+model Role {
+  id    Int    @id @default(autoincrement())
+  nama  String @unique // "Admin", "Cashier", "Employee"
+  users User[]
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  nama      String
+  password  String // Penting: Jangan simpan password asli, simpan versi hash-nya
+  role      Role     @relation(fields: [roleId], references: [id])
+  roleId    Int
+
+  // Relasi ke fitur lain
+  gaji              Gaji[]
+  jadwal            Jadwal[]
+  absensi           Absensi[]
+  laporanPemasukan  LaporanPemasukan[]
+}
+
+// --- MODEL UNTUK FITUR JADWAL & ABSENSI ---
+
+model Jadwal {
+  id           Int      @id @default(autoincrement())
+  waktuMulai   DateTime
+  waktuSelesai DateTime
+  user         User     @relation(fields: [userId], references: [id])
+  userId       Int
+}
+
+model Absensi {
+  id         Int      @id @default(autoincrement())
+  jamMasuk   DateTime @default(now())
+  jamKeluar  DateTime? // Tanda tanya (?) berarti opsional (nullable)
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+}
+
+// --- MODEL UNTUK FITUR GAJI & PEMASUKAN ---
+
+model Gaji {
+  id         Int      @id @default(autoincrement())
+  gajiPokok  Float
+  bonus      Float    @default(0)
+  potongan   Float    @default(0)
+  tanggalGaji DateTime
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+}
+
+model LaporanPemasukan {
+  id              Int      @id @default(autoincrement())
+  jumlahPemasukan Float
+  tanggalLaporan  DateTime
+  shift           String // Menggunakan enum Shift di bawah
+  user            User     @relation(fields: [userId], references: [id])
+  userId          Int
+}
+
