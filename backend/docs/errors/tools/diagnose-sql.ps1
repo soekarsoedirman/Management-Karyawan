@@ -110,19 +110,21 @@ Write-Host ""
 
 # Check 6: Test Database Connection with Node.js script
 Write-Host "[6/8] Testing database connection with Node.js..." -ForegroundColor Yellow
-if (Test-Path "test-connection.js") {
+$testConnectionPath = Join-Path $PSScriptRoot "test-connection.js"
+if (Test-Path $testConnectionPath) {
     Write-Host "  Running test-connection.js..." -ForegroundColor Gray
     Write-Host ""
-    node test-connection.js
+    node $testConnectionPath
 } else {
-    Write-Host "  ⚠️  test-connection.js not found in current directory" -ForegroundColor Yellow
+    Write-Host "  ⚠️  test-connection.js not found in tools directory" -ForegroundColor Yellow
 }
 Write-Host ""
 
 # Check 7: Environment Variables
 Write-Host "[7/8] Checking .env file..." -ForegroundColor Yellow
-if (Test-Path ".env") {
-    $envContent = Get-Content ".env" | Select-String "DATABASE_URL"
+$envPath = Join-Path (Split-Path (Split-Path (Split-Path $PSScriptRoot))) ".env"
+if (Test-Path $envPath) {
+    $envContent = Get-Content $envPath | Select-String "DATABASE_URL"
     if ($envContent) {
         Write-Host "  ✅ DATABASE_URL found in .env" -ForegroundColor Green
         Write-Host "    $envContent" -ForegroundColor Gray

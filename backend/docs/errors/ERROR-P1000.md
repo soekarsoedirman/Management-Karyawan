@@ -39,18 +39,18 @@ Ada 2 cara:
 
 #### **CARA 1: Pakai Script SQL (RECOMMENDED)**
 
-Saya sudah buatkan script `setup-sql-login.sql`. Jalankan:
+Saya sudah buatkan script `setup-sql-login.sql` di `tools/`. Jalankan:
 
 **Via SSMS (SQL Server Management Studio):**
 1. Buka **SSMS**
 2. Connect ke server: `.\SQLEXPRESS` atau `localhost,1433` (pakai Windows Authentication)
-3. File → Open → `backend\setup-sql-login.sql`
+3. File → Open → `backend\docs\errors\tools\setup-sql-login.sql`
 4. Tekan **F5** atau klik **Execute**
 
 **Via sqlcmd:**
 ```powershell
 # Run di PowerShell:
-cd backend
+cd backend/docs/errors/tools
 sqlcmd -S localhost\SQLEXPRESS -E -i setup-sql-login.sql
 ```
 
@@ -94,6 +94,7 @@ GO
 Atau jalankan file `grant-create-db.sql` yang sudah ada:
 
 ```powershell
+cd ..
 sqlcmd -S localhost\SQLEXPRESS -E -i grant-create-db.sql
 ```
 
@@ -147,7 +148,7 @@ Jika berhasil, berarti **authentication sudah OK**!
 ### Step 6: Test dengan Node.js
 
 ```powershell
-cd backend
+cd backend/docs/errors/tools
 node test-connection.js
 ```
 
@@ -185,7 +186,7 @@ npm run dev
 
 **Fix:**
 1. Re-check password di `.env` (case-sensitive!)
-2. Re-buat user dengan script `setup-sql-login.sql`
+2. Re-buat user dengan script `tools/setup-sql-login.sql`
 3. Pastikan SQL Server dalam **Mixed Authentication mode**
 
 ---
@@ -249,6 +250,12 @@ SQL Server harus support SQL Authentication (bukan hanya Windows Auth).
    Restart-Service -Name "MSSQL$SQLEXPRESS" -Force
    ```
 
+Atau jalankan script otomatis:
+```powershell
+cd backend/docs/errors/tools
+.\enable-sql-auth.ps1
+```
+
 ---
 
 ## 📋 CHECKLIST
@@ -276,5 +283,5 @@ SQL Server harus support SQL Authentication (bukan hanya Windows Auth).
 ---
 
 **Next Error?**
-- Jika sudah fix P1000 tapi ada error lain → cek `TROUBLESHOOTING.md`
+- Jika sudah fix P1000 tapi ada error lain → cek [TROUBLESHOOTING.md](../TROUBLESHOOTING.md)
 - Error EPERM saat `prisma generate` → tutup server dulu (`Ctrl+C`)

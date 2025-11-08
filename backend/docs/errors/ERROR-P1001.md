@@ -28,7 +28,7 @@ Ini bisa terjadi karena:
 
 ```powershell
 # Run as Administrator:
-cd backend
+cd backend/docs/errors/tools
 .\diagnose-sql.ps1
 ```
 
@@ -166,7 +166,7 @@ DATABASE_URL="sqlserver://localhost:1433;database=db_restoran;user=prisma_user;p
 ### Step 8: Test Connection dengan Node.js
 
 ```powershell
-cd backend
+cd backend/docs/errors/tools
 node test-connection.js
 ```
 
@@ -249,13 +249,13 @@ Sebelum tanya bantuan, pastikan semua ini sudah dilakukan:
 - [ ] `node test-connection.js` **BERHASIL**
 - [ ] SQL Server **RESTARTED** setelah enable TCP/IP
 
-Jika semua ✅ tapi masih error → lihat `TROUBLESHOOTING.md` atau tanya tim.
+Jika semua ✅ tapi masih error → lihat `../TROUBLESHOOTING.md` atau tanya tim.
 
 ---
 
 ## 💡 TIPS
 
-- **Jalankan diagnostic script dulu** sebelum coba fix manual
+- **Jalankan diagnostic script dulu** sebelum coba fix manual (`tools/diagnose-sql.ps1`)
 - **Restart SQL Server** setelah setiap perubahan config
 - **Restart terminal/VS Code** setelah ubah `.env`
 - **Pakai port 1433 static**, jangan pakai instance name
@@ -271,5 +271,5 @@ Jika semua ✅ tapi masih error → lihat `TROUBLESHOOTING.md` atau tanya tim.
 **Referensi:**
 - Prisma Error Codes: https://www.prisma.io/docs/reference/api-reference/error-reference
 - SQL Server Configuration: https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/
-- TROUBLESHOOTING.md (file ini)
-- QUICK-FIX.md (solusi cepat)
+- [TROUBLESHOOTING.md](../TROUBLESHOOTING.md)
+- [QUICK-FIX.md](../../../QUICK-FIX.md)
