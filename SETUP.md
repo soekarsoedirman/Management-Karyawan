@@ -13,6 +13,8 @@ Pastikan sudah terinstall:
 - **Git** — [Download](https://git-scm.com/)
 - **Flutter SDK** (untuk mobile app) — [Download](https://flutter.dev/docs/get-started/install)
 
+> ⚠️ **JIKA MENGALAMI ERROR:** Lihat file `TROUBLESHOOTING.md` untuk solusi lengkap error umum!
+
 ---
 
 ## 🚀 Langkah-langkah Setup
@@ -104,6 +106,31 @@ JWT_SECRET="kata_mamah_aku_sigma08953214371987"
 
 **PENTING:** Jangan tambahkan `instanceName` ke config karena sudah pakai port 1433 default.
 
+#### Test Koneksi Database SEBELUM Prisma Push
+
+**WAJIB:** Jalankan test koneksi terlebih dahulu untuk memastikan SQL Server siap:
+
+```powershell
+node test-connection.js
+```
+
+Expected output jika sukses:
+```
+✅ Step 1: Connection SUCCESSFUL!
+✅ Step 2: Query execution SUCCESSFUL!
+✅ Step 3: Database 'db_restoran' EXISTS!
+✅ Step 4: Permission check SUCCESSFUL!
+✅ Step 5: Table operations SUCCESSFUL!
+
+🎉 ALL TESTS PASSED! SQL Server is ready for Prisma!
+```
+
+**Jika test GAGAL (error ECONNRESET, ESOCKET, dll):**
+- Lihat file `TROUBLESHOOTING.md` untuk solusi lengkap
+- Pastikan SQL Server service running
+- Pastikan TCP/IP protocol enabled
+- Pastikan port 1433 tidak diblokir firewall
+
 #### Sinkronkan Database Schema
 
 **Opsi A — Pakai `db push` (untuk dev lokal, lebih cepat):**
@@ -122,7 +149,13 @@ npx prisma migrate dev --name init
 npx prisma generate
 ```
 
-#### Test Koneksi Database
+**Jika muncul error saat `npx prisma db push`:**
+1. Pastikan test-connection.js sudah berhasil
+2. Lihat `TROUBLESHOOTING.md` untuk solusi error ECONNRESET
+3. Pastikan SQL Server TCP/IP enabled dan restart service
+4. Coba tambahkan timeout: edit DATABASE_URL tambahkan `;connectTimeout=30000`
+
+#### Seed Database dengan Data Awal
 
 Gunakan script test sebelum run server:
 ```powershell

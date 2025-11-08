@@ -6,6 +6,13 @@ Aplikasi manajemen karyawan dengan backend Node.js (Express + SQL Server) dan mo
 
 **Untuk setup pertama kali setelah clone, baca:** [`SETUP.md`](SETUP.md)
 
+**⚠️ Mengalami error saat setup?**
+- Error `P1001: Can't reach database server at localhost:1433`? → Baca [`ERROR-P1001.md`](ERROR-P1001.md) atau jalankan `backend\diagnose-sql.ps1`
+- Error `ECONNRESET` atau koneksi SQL Server gagal? → Baca [`QUICK-FIX.md`](QUICK-FIX.md)
+- Error lainnya atau troubleshooting lengkap? → Baca [`TROUBLESHOOTING.md`](TROUBLESHOOTING.md)
+- Test koneksi SQL Server: `node backend/test-connection.js`
+- Auto-diagnose masalah: `backend\diagnose-sql.ps1` (run as Administrator)
+
 ## 📁 Struktur Project
 
 ```
