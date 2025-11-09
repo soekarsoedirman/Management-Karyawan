@@ -2,19 +2,40 @@
 
 Lokasi: `backend/`
 
-Dokumentasi ini berisi API reference, aturan khusus (mis. field shift), panduan kontribusi, dan changelog untuk server Node + SQL Server.
+Dokumentasi ini berisi API reference, aturan khusus (mis. field shift), panduan kontribusi, changelog, dan error troubleshooting untuk server Node + SQL Server.
 
-File penting di folder ini:
-- `API.md` — Kontrak endpoint dan contoh request/response.
-- `SHIFT.md` — Penjelasan tentang cara menyimpan dan memvalidasi field `shift` (nilai yang diizinkan: `pagi`, `siang`, `malam`).
-- `CONTRIBUTING.md` — Proses kontribusi dan kewajiban memperbarui dokumentasi setiap perubahan.
-- `CHANGELOG.md` — Riwayat perubahan.
+## 📁 Struktur Dokumentasi
 
-Catatan singkat:
+### API & Development
+- **[API.md](API.md)** — Kontrak endpoint dan contoh request/response
+- **[POSTMAN.md](POSTMAN.md)** — Panduan testing dengan Postman
+- **[SHIFT.md](SHIFT.md)** — Penjelasan field `shift` (nilai: `pagi`, `siang`, `malam`)
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** — Proses kontribusi dan update dokumentasi
+- **[CHANGELOG.md](CHANGELOG.md)** — Riwayat perubahan
+
+### Error Troubleshooting
+- **[errors/](errors/)** — 📂 Folder error documentation
+  - **[errors/README.md](errors/README.md)** — Index semua error dan tools
+  - **[errors/ERROR-P1001.md](errors/ERROR-P1001.md)** — Can't reach database server
+  - **[errors/ERROR-P1000.md](errors/ERROR-P1000.md)** — Authentication failed
+
+### Setup & Tools
+- **`setup-sql-login.sql`** — Script buat user SQL Server otomatis
+- **`enable-sql-auth.ps1`** — Enable Mixed Authentication mode
+- **`grant-create-db.sql`** — Grant dbcreator permission
+- **`diagnose-sql.ps1`** — Auto-diagnostic tool untuk SQL Server issues
+- **`diagnose-sql.bat`** — Batch version diagnostic tool
+- **`test-connection.js`** — Test koneksi database
+
+---
+
+## Catatan Penting
+
 - Field `shift` disimpan sebagai string di database. Backend wajib memvalidasi nilainya sebelum menyimpan.
 - SELALU update dokumentasi setiap ada perubahan API agar frontend mudah integrasi.
+- Jika ada error, cek folder **[errors/](errors/)** terlebih dahulu sebelum troubleshoot manual.
 
-## Quick Start
+---
 
 1. **Install dependencies:**
    ```bash

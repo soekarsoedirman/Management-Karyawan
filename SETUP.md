@@ -4,6 +4,32 @@ Panduan lengkap untuk menjalankan project ini dari awal (setelah clone dari GitH
 
 ---
 
+## ⚡ Quick Start (TL;DR)
+
+**Sudah setup SQL Server & punya user `prisma_user`?** Jalankan ini:
+
+```powershell
+# 1. Clone & install
+git clone https://github.com/Bar-innutshell/Management-Karyawan.git
+cd Management-Karyawan/backend
+npm install
+
+# 2. Setup .env (edit dengan credentials kamu)
+copy .env.example .env
+
+# 3. Setup database
+npx prisma db push
+npx prisma generate
+npm run db:seed          # ⚠️ PENTING: Seed data default!
+
+# 4. Run server
+npm run dev
+```
+
+**Belum setup SQL Server?** Ikuti langkah lengkap di bawah! 👇
+
+---
+
 ## 📋 Prerequisites
 
 Pastikan sudah terinstall:
@@ -12,6 +38,8 @@ Pastikan sudah terinstall:
 - **SQL Server Management Studio (SSMS)** — [Download](https://aka.ms/ssmsfullsetup)
 - **Git** — [Download](https://git-scm.com/)
 - **Flutter SDK** (untuk mobile app) — [Download](https://flutter.dev/docs/get-started/install)
+
+> ⚠️ **JIKA MENGALAMI ERROR:** Lihat file `TROUBLESHOOTING.md` untuk solusi lengkap error umum!
 
 ---
 
@@ -104,6 +132,31 @@ JWT_SECRET="kata_mamah_aku_sigma08953214371987"
 
 **PENTING:** Jangan tambahkan `instanceName` ke config karena sudah pakai port 1433 default.
 
+#### Test Koneksi Database SEBELUM Prisma Push
+
+**WAJIB:** Jalankan test koneksi terlebih dahulu untuk memastikan SQL Server siap:
+
+```powershell
+node test-connection.js
+```
+
+Expected output jika sukses:
+```
+✅ Step 1: Connection SUCCESSFUL!
+✅ Step 2: Query execution SUCCESSFUL!
+✅ Step 3: Database 'db_restoran' EXISTS!
+✅ Step 4: Permission check SUCCESSFUL!
+✅ Step 5: Table operations SUCCESSFUL!
+
+🎉 ALL TESTS PASSED! SQL Server is ready for Prisma!
+```
+
+**Jika test GAGAL (error ECONNRESET, ESOCKET, dll):**
+- Lihat file `TROUBLESHOOTING.md` untuk solusi lengkap
+- Pastikan SQL Server service running
+- Pastikan TCP/IP protocol enabled
+- Pastikan port 1433 tidak diblokir firewall
+
 #### Sinkronkan Database Schema
 
 **Opsi A — Pakai `db push` (untuk dev lokal, lebih cepat):**
@@ -122,17 +175,44 @@ npx prisma migrate dev --name init
 npx prisma generate
 ```
 
-#### Test Koneksi Database
+**Jika muncul error saat `npx prisma db push`:**
+1. Pastikan test-connection.js sudah berhasil
+2. Lihat `TROUBLESHOOTING.md` untuk solusi error ECONNRESET
+3. Pastikan SQL Server TCP/IP enabled dan restart service
+4. Coba tambahkan timeout: edit DATABASE_URL tambahkan `;connectTimeout=30000`
 
-Gunakan script test sebelum run server:
+#### Seed Database dengan Data Awal
+
+**PENTING:** Sebelum run server, seed database dengan data default!
+
 ```powershell
-node test-db.js
+npm run db:seed
 ```
 
 Expected output:
 ```
-✅ Connected to SQL Server
-✅ Query result: { db: 'db_restoran', server: 'NAMA-PC' }
+🌱 Starting seed...
+✅ Roles seeded successfully!
+✅ Admin user created successfully!
+🎉 Database seeded successfully!
+```
+
+**Script ini akan membuat:**
+- 3 Roles default: Admin, Kasir, Koki
+- 1 Admin user default:
+  - Email: `admin@admin.com`
+  - Password: `admin123`
+  - Role: Admin
+
+> ⚠️ **JANGAN SKIP LANGKAH INI!** Jika tidak seed:
+> - Database kosong, tidak ada roles
+> - API `/auth/register` akan error: `Foreign key constraint violated on the constraint: 'User_roleId_fkey'`
+> - Tidak bisa register user baru karena roleId tidak ada
+> - Solusi: Jalankan `npm run db:seed` sekarang!
+
+**Test koneksi (optional):**
+```powershell
+node test-db.js
 ```
 
 #### Jalankan Server
