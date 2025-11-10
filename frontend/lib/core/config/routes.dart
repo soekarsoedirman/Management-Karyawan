@@ -15,6 +15,12 @@ import '../../features/schedule/screen/screen.dart';
 import '../../features/payroll/screen/screen.dart';
 import '../../features/reporting/screen/screen.dart';
 import '../../features/attendance/screen/screen.dart';
+import '../../features/attendance/screen/screen.dart';
+import '../../features/payroll/screen/screen.dart';
+import '../../features/payroll/screen/salary_info_screen.dart';
+import '../../features/payroll/screen/salary_detail_screen.dart';
+import '../../features/admin_panel/screen/manage_user_list_screen.dart';
+import '../../features/admin_panel/screen/manage_user_detail_screen.dart';
 
 // ===== Definisi Nama Routes =====
 class Routes {
@@ -38,6 +44,12 @@ class Routes {
   static const attendance = '$employeeDashboard/attendance';
   static const payroll = '$employeeDashboard/payroll';
   static const reporting = '$employeeDashboard/reporting';
+  static const attendance = '/attendance';
+  static const payroll = '/payroll';
+  static const salaryInfo = '/admin/dashboard/informasi-gaji';
+  static const salaryDetail = '/admin/dashboard/informasi-gaji/detail';
+  static const userList = '/admin/dashboard/informasi-karyawan';
+  static const userDetail = '/admin/dashboard/informasi-karyawan/detail';
 }
 
 // ===== Definisi Halaman untuk Setiap Route =====
@@ -70,5 +82,14 @@ class AppPages {
     GetPage(name: Routes.payroll, page: () => const PayrollScreen()),
     GetPage(name: Routes.reporting, page: () => const ReportingScreen()),
     GetPage(name: Routes.attendance, page: () => const AttendanceScreen()),
+    GetPage(name: Routes.attendance, page: () => const AttendanceScreen()),
+    GetPage(name: Routes.payroll, page: () => const PayrollScreen()),
+    GetPage(name: Routes.salaryInfo, page: () => const SalaryInfoScreen()),
+    GetPage(name: Routes.salaryDetail, page: () => const SalaryDetailScreen()),
+    GetPage(name: Routes.userList, page: () => const ManageUserListScreen()),
+    GetPage(
+      name: Routes.userDetail,
+      page: () => const ManageUserDetailScreen(),
+    ),
   ];
 }
