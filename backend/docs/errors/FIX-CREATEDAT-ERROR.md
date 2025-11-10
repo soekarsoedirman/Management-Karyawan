@@ -14,51 +14,99 @@ atau
 The column updatedAt does not exist in the current database.
 ```
 
+**Error bisa muncul di tabel:**
+- ❌ `User`
+- ❌ `Absensi`
+- ❌ `Jadwal`
+- ❌ `LaporanPemasukan`
+
 ## Root Cause
 
-Database belum punya field `createdAt` dan `updatedAt` di table `User`. Ini terjadi karena:
+Database belum punya field `createdAt` dan `updatedAt`. Ini terjadi karena:
 - Database dibuat sebelum field ini ditambahkan ke schema
 - Migration belum dijalankan
 - Schema Prisma tidak sync dengan database
 
 ## Solution (Step by Step)
 
-### Option 1: Quick Fix (Recommended)
+### Option 1: Quick Fix - All Tables ⭐ **Recommended**
+
+Gunakan ini jika error muncul di **Absensi, Jadwal, atau LaporanPemasukan**:
 
 ```powershell
-# 1. Masuk ke folder backend
+# 1. Masuk ke project root
+cd C:\Projek\AndroidFreaky\01-SbdlPakeMysql
+
+# 2. Jalankan migration SQL untuk SEMUA tabel
+sqlcmd -S .\SQLEXPRESS -E -i backend\docs\tools\add-timestamps-all-tables.sql
+
+# 3. Masuk ke backend folder
 cd backend
 
-# 2. Jalankan migration SQL
-sqlcmd -S .\SQLEXPRESS -E -i docs/tools/add-user-timestamps.sql
-
-# 3. Generate Prisma Client
+# 4. Generate Prisma Client
 npx prisma generate
 
-# 4. Test dengan Prisma Studio
+# 5. Test dengan Prisma Studio
 npx prisma studio
 # Buka http://localhost:5557
 ```
 
-**Selesai!** Error seharusnya hilang.
+**Selesai!** Error seharusnya hilang di semua tabel.
 
 ---
 
-### Option 2: Manual via SQL Server Management Studio (SSMS)
+### Option 3: Manual via SQL Server Management Studio (SSMS)
 
-Jika `sqlcmd` tidak work, jalankan query ini di SSMS:
+Jika `sqlcmd` tidak work, jalankan script ini di SSMS untuk **semua tabel**:
+
+**File:** `backend\docs\tools\add-timestamps-all-tables.sql`
+
+1. Buka SSMS → Connect ke SQL Server
+2. File → Open → File...
+3. Pilih `backend\docs\tools\add-timestamps-all-tables.sql`
+4. Execute (F5)
+5. Lihat output messages untuk konfirmasi
+
+Atau copy-paste manual query dari file tersebut.
+
+---
+
+## Alternative: Manual SQL (Copy-Paste)
+
+Jika tidak ada akses ke file SQL, jalankan query ini di SSMS:
 
 ```sql
 USE db_restoran;
 GO
 
--- Add createdAt column
+-- ===== USER TABLE =====
 ALTER TABLE [User]
 ADD createdAt DATETIME2 NOT NULL DEFAULT GETDATE();
 
--- Add updatedAt column
 ALTER TABLE [User]
 ADD updatedAt DATETIME2 NOT NULL DEFAULT GETDATE();
+
+-- ===== ABSENSI TABLE =====
+ALTER TABLE Absensi
+ADD createdAt DATETIME2 NOT NULL DEFAULT GETDATE();
+
+ALTER TABLE Absensi
+ADD updatedAt DATETIME2 NOT NULL DEFAULT GETDATE();
+
+-- ===== JADWAL TABLE =====
+ALTER TABLE Jadwal
+ADD createdAt DATETIME2 NOT NULL DEFAULT GETDATE();
+
+ALTER TABLE Jadwal
+ADD updatedAt DATETIME2 NOT NULL DEFAULT GETDATE();
+
+-- ===== LAPORANPEMASUKAN TABLE =====
+ALTER TABLE LaporanPemasukan
+ADD createdAt DATETIME2 NOT NULL DEFAULT GETDATE();
+
+ALTER TABLE LaporanPemasukan
+ADD updatedAt DATETIME2 NOT NULL DEFAULT GETDATE();
+
 GO
 ```
 
@@ -66,18 +114,19 @@ Lalu:
 ```powershell
 cd backend
 npx prisma generate
+npx prisma studio  # Test
 ```
 
 ---
 
-### Option 3: Sync Schema dari Database
+### Option 4: Sync Schema dari Database
 
-Jika database teman kamu berbeda total:
+Jika database teman kamu berbeda total dan ingin reset schema:
 
 ```powershell
 cd backend
 
-# Pull schema dari database
+# Pull schema dari database (overwrite schema.prisma)
 npx prisma db pull
 
 # Generate Prisma Client
@@ -86,6 +135,8 @@ npx prisma generate
 # Restart server
 node index.js
 ```
+
+**⚠️ Warning:** Option ini akan overwrite `schema.prisma` dengan struktur database yang ada.
 
 ---
 
@@ -186,11 +237,14 @@ npx prisma studio
 
 ---
 
-## Files Created
+## Files Available
 
-- ✅ `backend/docs/tools/add-user-timestamps.sql` - Migration untuk fix error ini
-- ✅ Schema Prisma sudah updated
-- ✅ Prisma Client sudah di-generate
+- ✅ `backend/docs/tools/add-timestamps-all-tables.sql` - Migration untuk **semua tabel** ⭐ **Recommended**
+- ✅ `backend/docs/tools/add-user-timestamps.sql` - Migration untuk tabel `User` saja
+- ✅ Schema Prisma sudah include timestamps
+- ✅ Prisma Client auto-generated setelah migration
+
+**Pilih script yang sesuai dengan error yang muncul!**
 
 ---
 

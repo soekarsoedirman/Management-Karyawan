@@ -6,8 +6,35 @@ Folder ini berisi tools dan scripts untuk migration, testing, dan utilities.
 
 ### Migration Scripts
 
+#### `add-timestamps-all-tables.sql` ⭐ **Recommended**
+Script untuk menambahkan kolom `createdAt` dan `updatedAt` ke **semua tabel** (Absensi, Jadwal, LaporanPemasukan).
+
+**Usage:**
+```powershell
+# From project root
+sqlcmd -S .\SQLEXPRESS -E -i backend\docs\tools\add-timestamps-all-tables.sql
+
+# Windows Auth
+sqlcmd -S localhost,1433 -E -i backend\docs\tools\add-timestamps-all-tables.sql
+
+# SQL Auth
+sqlcmd -S localhost,1433 -U prisma_user -P "Prisma!2025" -i backend\docs\tools\add-timestamps-all-tables.sql
+```
+
+**Features:**
+- ✅ Adds timestamps to Absensi table
+- ✅ Adds timestamps to Jadwal table
+- ✅ Adds timestamps to LaporanPemasukan table
+- ✅ Checks if columns already exist before adding
+- ✅ Safe to run multiple times
+- ✅ Adds default values for existing rows
+
+**See Also:** `../errors/FIX-CREATEDAT-ERROR.md`
+
+---
+
 #### `add-user-timestamps.sql`
-Script untuk menambahkan kolom `createdAt` dan `updatedAt` ke tabel `User`.
+Script untuk menambahkan kolom `createdAt` dan `updatedAt` ke tabel `User` saja.
 
 **Usage:**
 ```powershell
@@ -26,6 +53,8 @@ sqlcmd -S localhost,1433 -U prisma_user -P "Prisma!2025" -i docs/tools/add-user-
 - ✅ Safe to run multiple times
 - ✅ Adds default values for existing rows
 - ✅ Creates indexes for better performance
+
+**Note:** Use `add-timestamps-all-tables.sql` instead if you need timestamps on all tables.
 
 **See Also:** `../errors/FIX-CREATEDAT-ERROR.md`
 
