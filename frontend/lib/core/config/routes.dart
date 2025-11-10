@@ -6,6 +6,10 @@ import '../../features/admin_panel/screen/screen.dart';
 import '../../features/employee/screen/screen.dart';
 import '../../features/attendance/screen/screen.dart';
 import '../../features/payroll/screen/screen.dart';
+import '../../features/payroll/screen/salary_info_screen.dart';
+import '../../features/payroll/screen/salary_detail_screen.dart';
+import '../../features/admin_panel/screen/manage_user_list_screen.dart';
+import '../../features/admin_panel/screen/manage_user_detail_screen.dart';
 
 class Routes {
   static const splash = '/splash';
@@ -15,6 +19,10 @@ class Routes {
   static const employeeDashboard = '/dashboard/employee';
   static const attendance = '/attendance';
   static const payroll = '/payroll';
+  static const salaryInfo = '/admin/dashboard/informasi-gaji';
+  static const salaryDetail = '/admin/dashboard/informasi-gaji/detail';
+  static const userList = '/admin/dashboard/informasi-karyawan';
+  static const userDetail = '/admin/dashboard/informasi-karyawan/detail';
 }
 
 class AppPages {
@@ -26,5 +34,12 @@ class AppPages {
     GetPage(name: Routes.employeeDashboard, page: () => const EmployeeScreen()),
     GetPage(name: Routes.attendance, page: () => const AttendanceScreen()),
     GetPage(name: Routes.payroll, page: () => const PayrollScreen()),
+    GetPage(name: Routes.salaryInfo, page: () => const SalaryInfoScreen()),
+    GetPage(name: Routes.salaryDetail, page: () => const SalaryDetailScreen()),
+    GetPage(name: Routes.userList, page: () => const ManageUserListScreen()),
+    GetPage(
+      name: Routes.userDetail,
+      page: () => const ManageUserDetailScreen(),
+    ),
   ];
 }
