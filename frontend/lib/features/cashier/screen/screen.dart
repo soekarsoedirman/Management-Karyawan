@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../core/config/routes.dart';
 
-import '../../../core/config/routes.dart';
-
-class AdminPanelScreen extends StatelessWidget {
-  const AdminPanelScreen({super.key});
+class CashierScreen extends StatelessWidget {
+  const CashierScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final String userName = "Nama Admin";
-    final String userRole = "Admin";
+    final String userName = "Nama Cashier"; // placeholder
+    final String userRole = "Cashier";
 
     const Color bgColor = Color(0xFF0F172A);
     const Color cardColor = Color(0xFF1E293B);
     const Color textPrimary = Colors.white;
     const Color textSecondary = Color(0xFFCBD5E1);
-    const Color accentRed = Color(0xFFEF4444);
+    const Color accentGreen = Color(0xFF22C55E);
 
     return Scaffold(
       body: Container(
@@ -42,6 +41,7 @@ class AdminPanelScreen extends StatelessWidget {
                   children: [
                     // kiri: Nama & Role
                     Column(
+                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
@@ -64,12 +64,12 @@ class AdminPanelScreen extends StatelessWidget {
                             vertical: 5,
                           ),
                           decoration: BoxDecoration(
-                            color: accentRed.withOpacity(0.2),
+                            color: accentGreen.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: const Text(
-                            "Admin",
-                            style: TextStyle(
+                          child: Text(
+                            userRole,
+                            style: const TextStyle(
                               fontSize: 13,
                               color: textPrimary,
                               fontWeight: FontWeight.w500,
@@ -78,7 +78,7 @@ class AdminPanelScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    // kanan: Log Out
+                    // kanan: Log Out dengan outline merah
                     Container(
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.red, width: 1),
@@ -90,11 +90,11 @@ class AdminPanelScreen extends StatelessWidget {
                           Get.offAllNamed(Routes.auth);
                         },
                         style: TextButton.styleFrom(
+                          backgroundColor: cardColor,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
                             vertical: 6,
                           ),
-                          backgroundColor: cardColor,
                         ),
                         child: const Text(
                           "Log Out",
@@ -109,12 +109,11 @@ class AdminPanelScreen extends StatelessWidget {
                 ),
               ),
 
-              // ===== KONTEN SCROLLABLE =====
+              // ===== KONTEN =====
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.all(16),
                   children: [
-                    // HERO IMAGE
                     Center(
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 800),
@@ -123,7 +122,7 @@ class AdminPanelScreen extends StatelessWidget {
                           child: AspectRatio(
                             aspectRatio: 16 / 9,
                             child: Image.asset(
-                              'assets/gedung_untirta.png',
+                              'assets/jalan.png',
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -133,13 +132,12 @@ class AdminPanelScreen extends StatelessWidget {
 
                     const SizedBox(height: 16),
 
-                    // ===== MENU ADMIN LABEL =====
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 4),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Menu Admin",
+                          "Menu Cashier",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -151,45 +149,45 @@ class AdminPanelScreen extends StatelessWidget {
 
                     const SizedBox(height: 12),
 
-                    // ===== CARD MENU ADMIN =====
-                    _buildAdminCard(
+                    // ===== MENU CARDS DUMMY =====
+                    _buildMenuCard(
                       context,
-                      icon: Icons.group,
-                      title: "User",
-                      description:
-                          "Kelola data karyawan: tambah, edit, dan hapus.",
-                      routeName: Routes.manageUser,
+                      icon: Icons.calendar_today,
+                      title: "Lihat Jadwal",
+                      description: "Lihat detail jadwal kerja mu.",
+                      routeName: Routes.schedule,
+                      accentColor: accentGreen,
                     ),
-                    _buildAdminCard(
+                    _buildMenuCard(
                       context,
-                      icon: Icons.calendar_month,
-                      title: "Manage Jadwal",
-                      description:
-                          "Atur jadwal kerja berdasarkan shift dan karyawan.",
-                      routeName: Routes.manageSchedule,
+                      icon: Icons.access_time,
+                      title: "Absensi Harian",
+                      description: "Cek dan catat kehadiran kamu setiap hari.",
+                      routeName: Routes.attendance,
+                      accentColor: accentGreen,
                     ),
-                    _buildAdminCard(
+                    _buildMenuCard(
                       context,
-                      icon: Icons.bar_chart,
-                      title: "Lihat Laporan Pemasukan",
-                      description:
-                          "Lihat history pemasukan sesuai data laporan.",
-                      routeName: Routes.manageReport,
+                      icon: Icons.attach_money,
+                      title: "Cek Gaji",
+                      description: "Lihat detail gaji dan tunjangan bulanan.",
+                      routeName: Routes.payroll,
+                      accentColor: accentGreen,
                     ),
-                    _buildAdminCard(
+                    _buildMenuCard(
                       context,
-                      icon: Icons.payments,
-                      title: "Manage Gaji",
-                      description:
-                          "Kelola gaji dan bonus untuk setiap karyawan.",
-                      routeName: Routes.managePayroll,
+                      icon: Icons.note_alt,
+                      title: "Kirim Laporan (Kasir)",
+                      description: "Kirim laporan harian untuk bagian kasir.",
+                      routeName: Routes.reporting,
+                      accentColor: accentGreen,
                     ),
 
                     const SizedBox(height: 12),
 
                     const Center(
                       child: Text(
-                        "Admin Panel • Manajemen Karyawan v1.0",
+                        "Manajemen Karyawan v1.0",
                         style: TextStyle(fontSize: 12, color: textSecondary),
                       ),
                     ),
@@ -203,81 +201,70 @@ class AdminPanelScreen extends StatelessWidget {
     );
   }
 
-  // ===== CARD MENU ADMIN =====
-  Widget _buildAdminCard(
+  Widget _buildMenuCard(
     BuildContext context, {
     required IconData icon,
     required String title,
     required String description,
     required String routeName,
+    required Color accentColor,
   }) {
     const Color cardColor = Color(0xFF1E293B);
     const Color textPrimary = Colors.white;
     const Color textSecondary = Color(0xFFCBD5E1);
-    const Color accentRed = Color(0xFFEF4444);
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            Get.toNamed(routeName);
-          },
-          borderRadius: BorderRadius.circular(12),
-          child: Ink(
-            decoration: BoxDecoration(
-              color: cardColor,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  blurRadius: 6,
-                  offset: const Offset(0, 3),
-                ),
-              ],
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: InkWell(
+        onTap: () {
+          Get.toNamed(routeName);
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: accentColor.withOpacity(0.18),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: accentColor),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: accentRed.withOpacity(0.18),
-                      borderRadius: BorderRadius.circular(12),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: textPrimary,
                     ),
-                    child: Icon(icon, color: accentRed),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: textPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          description,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
+                  const SizedBox(height: 4),
+                  Text(
+                    description,
+                    style: const TextStyle(fontSize: 13, color: textSecondary),
                   ),
                 ],
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
