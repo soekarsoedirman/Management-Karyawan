@@ -25,7 +25,10 @@ class ApiService {
       ),
     );
 
-    debugPrint('ApiService: baseUrl=${AppConstants.baseUrl}');
+    debugPrint(
+      'ApiService: constructing Dio with baseUrl=${AppConstants.baseUrl}',
+    );
+
     assert(!AppConstants.baseUrl.contains('/api'));
 
     final s = storage ?? StorageService();
@@ -127,253 +130,53 @@ class ApiService {
     }
   }
 
-  // =============================================================
-  // ROLES
-  // =============================================================
-  /// Ambil daftar semua role (GET /roles)
-  Future<List<Role>> fetchRoles() async {
-    try {
-      final resp = await _dio.get('/roles');
-      final payload = resp.data;
-      final list = (payload is Map && payload['data'] is List)
-          ? payload['data'] as List
-          : (payload as List? ?? const []);
-      return list.whereType<Map<String, dynamic>>().map(Role.fromJson).toList();
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // =====================================================
+  // 🌐 GENERIC API METHODS (untuk fitur lain, termasuk laporan)
+  // =====================================================
 
-  /// Ambil satu role by id (GET /roles/:id) typed
-  Future<Role?> fetchRole(int id) async {
-    try {
-      final resp = await _dio.get('/roles/$id');
-      final data = resp.data;
-      final map = (data is Map && data['data'] is Map)
-          ? data['data'] as Map<String, dynamic>
-          : (data as Map<String, dynamic>);
-      return Role.fromJson(map);
-    } catch (_) {
-      return null;
-    }
+  Future<dynamic> getData(String endpoint) async {
+  try {
+    final response = await _dio.get(endpoint);
+    return response.data;
+  } on DioException catch (e) {
+    throw Exception(e.response?.data['message'] ?? e.message);
   }
+}
 
-  /// Buat role baru (POST /roles)
-  Future<Role> createRole({
-    required String nama,
-    double? gajiPokokBulanan, // ✅ Changed to double to match model
-    String? deskripsi,
-  }) async {
+  Future<dynamic> postData(String endpoint, Map<String, dynamic> data) async {
+  try {
+    final response = await _dio.post(endpoint, data: data);
+    return response.data;
+  } on DioException catch (e) {
+    throw Exception(e.response?.data['message'] ?? e.message);
+  }
+}
+
+  Future<dynamic> putData(String endpoint, Map<String, dynamic> data) async {
     try {
-      final resp = await _dio.post(
-        '/roles',
-        data: {
-          'nama': nama,
-          // Backend expects 'gajiPokok' but we use gajiPokokBulanan internally
-          if (gajiPokokBulanan != null) 'gajiPokok': gajiPokokBulanan,
-          if (deskripsi != null) 'deskripsi': deskripsi,
-        },
-      );
-      final map = resp.data['data'] as Map<String, dynamic>;
-      return Role.fromJson(map);
+      final resp = await _dio.put(endpoint, data: data);
+      return resp.data;
     } on DioException catch (e) {
-      throw Exception(_extractMessage(e));
+      _handleError(e);
     }
   }
 
-  /// Update role (PUT /roles/:id)
-  Future<Role> updateRole(
-    int id, {
-    String? nama,
-    double? gajiPokokBulanan, // ✅ Changed to double to match model
-    String? deskripsi,
-  }) async {
+  Future<dynamic> deleteData(String endpoint) async {
     try {
-      final resp = await _dio.put(
-        '/roles/$id',
-        data: {
-          if (nama != null) 'nama': nama,
-          // Backend expects 'gajiPokok' but we use gajiPokokBulanan internally
-          if (gajiPokokBulanan != null) 'gajiPokok': gajiPokokBulanan,
-          if (deskripsi != null) 'deskripsi': deskripsi,
-        },
-      );
-      final map = resp.data['data'] as Map<String, dynamic>;
-      return Role.fromJson(map);
+      final resp = await _dio.delete(endpoint);
+      return resp.data;
     } on DioException catch (e) {
-      throw Exception(_extractMessage(e));
+      _handleError(e);
     }
   }
 
-  /// Hapus role (DELETE /roles/:id)
-  Future<void> deleteRole(int id) async {
-    try {
-      await _dio.delete('/roles/$id');
-    } on DioException catch (e) {
-      throw Exception(_extractMessage(e));
+  void _handleError(DioException e) {
+    final respData = e.response?.data;
+    if (respData is Map && respData['message'] != null) {
+      throw Exception(respData['message'].toString());
+    } else {
+      throw Exception(e.message);
     }
   }
-
-  // ═══════════════════════════════════════════════════════════
-  // GAJI ENDPOINTS (gajiRoute.js)
-  // ═══════════════════════════════════════════════════════════
-
-  /// POST /gaji/set-gaji-perjam
-  /// Set hourly wage for a user
-  Future<UserGajiDetail> setGajiPerJam({
-    required int userId,
-    required double gajiPerJam,
-  }) async {
-    try {
-      final response = await _dio.post(
-        '/gaji/set-gaji-perjam',
-        data: {'userId': userId, 'gajiPerJam': gajiPerJam},
-      );
-
-      final data = response.data['data'] ?? response.data;
-      return UserGajiDetail.fromJson(data as Map<String, dynamic>);
-    } on DioException catch (e) {
-      throw Exception(_extractMessage(e));
-    }
-  }
-
-  /// POST /gaji/hitung-dari-gaji-pokok
-  /// Calculate salary from role's base salary
-  Future<UserGajiDetail> hitungDariGajiPokok({required int userId}) async {
-    try {
-      final response = await _dio.post(
-        '/gaji/hitung-dari-gaji-pokok',
-        data: {'userId': userId},
-      );
-
-      final data = response.data['data'] ?? response.data;
-      return UserGajiDetail.fromJson(data as Map<String, dynamic>);
-    } on DioException catch (e) {
-      throw Exception(_extractMessage(e));
-    }
-  }
-
-  /// GET /gaji/user/:userId
-  /// Get salary details for a specific user
-  Future<UserGajiDetail?> fetchUserGaji(int userId) async {
-    try {
-      final response = await _dio.get('/gaji/user/$userId');
-      final data = response.data['data'] ?? response.data;
-
-      if (data is Map<String, dynamic>) {
-        return UserGajiDetail.fromJson(data);
-      }
-      return null;
-    } catch (_) {
-      return null;
-    }
-  }
-
-  /// GET /gaji/all
-  /// Get salary list for all users
-  Future<List<UserGajiListItem>> fetchAllUserGaji() async {
-    try {
-      final response = await _dio.get('/gaji/all');
-      final data = response.data['data'] ?? response.data;
-
-      if (data is List) {
-        return data
-            .whereType<Map<String, dynamic>>()
-            .map(UserGajiListItem.fromJson)
-            .toList();
-      }
-      return const [];
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  // ═══════════════════════════════════════════════════════════
-  // USER MANAGEMENT ENDPOINTS (authRoute.js)
-  // ═══════════════════════════════════════════════════════════
-
-  /// GET /auth/users
-  /// Get all users
-  Future<List<User>> getUsers() async {
-    try {
-      final response = await _dio.get('/auth/users');
-      final data = response.data['data'] ?? response.data;
-
-      if (data is List) {
-        return data
-            .whereType<Map<String, dynamic>>()
-            .map(User.fromJson)
-            .toList();
-      }
-      return const [];
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  /// GET /auth/user/:id
-  /// Get user by ID
-  Future<User?> getUser(int id) async {
-    try {
-      final response = await _dio.get('/auth/user/$id');
-      final data = response.data['data'] ?? response.data;
-
-      if (data is Map<String, dynamic>) {
-        return User.fromJson(data);
-      }
-      return null;
-    } catch (_) {
-      return null;
-    }
-  }
-
-  /// PUT /auth/user/:id
-  /// Update user
-  Future<User> updateUser(
-    int id, {
-    String? nama,
-    String? email,
-    String? password,
-    int? roleId,
-    double? gajiPerJam,
-  }) async {
-    try {
-      final response = await _dio.put(
-        '/auth/user/$id',
-        data: {
-          if (nama != null) 'nama': nama,
-          if (email != null) 'email': email,
-          if (password != null) 'password': password,
-          if (roleId != null) 'roleId': roleId,
-          if (gajiPerJam != null) 'gajiPerJam': gajiPerJam,
-        },
-      );
-
-      final data = response.data['data'] ?? response.data;
-      return User.fromJson(data as Map<String, dynamic>);
-    } on DioException catch (e) {
-      throw Exception(_extractMessage(e));
-    }
-  }
-
-  /// DELETE /auth/user/:id
-  /// Delete user
-  Future<void> deleteUser(int id) async {
-    try {
-      await _dio.delete('/auth/user/$id');
-    } on DioException catch (e) {
-      throw Exception(_extractMessage(e));
-    }
-  }
-
-  // =============================================================
-  // Helpers
-  // =============================================================
-  String _extractMessage(DioException e) {
-    final d = e.response?.data;
-    if (d is Map && d['message'] != null) {
-      return d['message'].toString();
-    }
-    return e.message ?? 'Network error';
-  }
+  
 }
