@@ -222,7 +222,150 @@ Hapus role (Admin only).
 
 ---
 
-## 🔧 Health Check
+## � Pemasukkan Management
+
+**Headers untuk semua endpoint:**
+```
+Authorization: Bearer <token>
+```
+
+### GET /pemasukkan/show
+Lihat semua laporan pemasukkan (authenticated users).
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**Response 200 (OK):**
+```json
+{
+  "message": "Daftar pemasukkan berhasil diambil",
+  "data": [
+    {
+      "id": 1,
+      "jumlahPemasukan": 5000000,
+      "tanggalLaporan": "2025-11-10T10:30:00.000Z",
+      "shift": "Pagi",
+      "userId": 2,
+      "user": {
+        "id": 2,
+        "nama": "Jane Smith",
+        "email": "jane@example.com"
+      }
+    },
+    {
+      "id": 2,
+      "jumlahPemasukan": 7500000,
+      "tanggalLaporan": "2025-11-09T15:45:00.000Z",
+      "shift": "Siang",
+      "userId": 2,
+      "user": {
+        "id": 2,
+        "nama": "Jane Smith",
+        "email": "jane@example.com"
+      }
+    }
+  ]
+}
+```
+
+**Response 401 (Unauthorized):**
+```json
+{
+  "message": "Token tidak valid atau tidak ditemukan."
+}
+```
+
+---
+
+### POST /pemasukkan/insert
+Buat laporan pemasukkan baru (hanya userId 2).
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**Request Body:**
+```json
+{
+  "userId": 2,
+  "jumlahPemasukkan": 5000000,
+  "shift": "Pagi"
+}
+```
+
+**Field Descriptions:**
+- `userId` (number, required): ID user yang membuat laporan (harus 2)
+- `jumlahPemasukkan` (number, required): Jumlah pemasukkan dalam Rupiah
+- `shift` (string, required): Shift kerja ("Pagi", "Siang", atau "Malam")
+
+**Response 201 (Created):**
+```json
+{
+  "message": "Data pemasukkan berhasil ditambahkan",
+  "data": {
+    "id": 3,
+    "userId": 2,
+    "jumlahPemasukan": 5000000,
+    "shift": "Pagi",
+    "tanggalLaporan": "2025-11-10T12:00:00.000Z"
+  }
+}
+```
+
+**Response 400 (Bad Request - Data tidak lengkap):**
+```json
+{
+  "message": "Data tidak lengkap. Pastikan userId, jumlahPemasukkan, dan shift terisi."
+}
+```
+
+**Response 400 (Bad Request - userId invalid):**
+```json
+{
+  "message": "userId harus berupa angka."
+}
+```
+
+**Response 400 (Bad Request - jumlahPemasukkan invalid):**
+```json
+{
+  "message": "jumlahPemasukkan harus berupa angka yang valid."
+}
+```
+
+**Response 403 (Forbidden - userId bukan 2):**
+```json
+{
+  "message": "Aksi ditolak. Hanya user dengan ID 2 yang diizinkan membuat laporan."
+}
+```
+
+**Response 404 (Not Found - User tidak ada):**
+```json
+{
+  "message": "Gagal: User dengan ID 2 tidak ditemukan."
+}
+```
+
+**Response 500 (Server Error):**
+```json
+{
+  "message": "Terjadi kesalahan pada server",
+  "error": "Error message details"
+}
+```
+
+**Catatan:**
+- Endpoint ini memiliki business logic yang membatasi hanya `userId: 2` yang bisa membuat laporan
+- `tanggalLaporan` otomatis diisi dengan waktu saat ini
+- Data diurutkan berdasarkan `tanggalLaporan` terbaru di endpoint `/show`
+
+---
+
+## �🔧 Health Check
 
 ### GET /db/ping
 Health check koneksi database.
