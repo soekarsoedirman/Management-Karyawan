@@ -3,6 +3,10 @@ const cors = require('cors')
 const dotenv = require('dotenv')
 const authRoutes = require('./routes/authRoute')
 const roleRoutes = require('./routes/roleRoute')
+const pemasukkanRoute = require('./routes/pemasukkanRoute')
+const laporanRoute = require('./routes/laporanRoute')
+const gajiRoute = require('./routes/gajiRoute')
+const absensiRoute = require('./routes/absensiRoute')
 dotenv.config()
 
 const app = express()
@@ -47,6 +51,10 @@ app.get('/db/ping', async (req, res) => {
 
 app.use('/auth', authRoutes)
 app.use('/roles', roleRoutes)
+app.use('/pemasukkan', pemasukkanRoute)
+app.use('/laporan', laporanRoute)
+app.use('/gaji', gajiRoute)
+app.use('/absensi', absensiRoute)
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, '0.0.0.0', () => {

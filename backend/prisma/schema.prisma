@@ -35,6 +35,12 @@ model User {
   password  String // Penting: Jangan simpan password asli, simpan versi hash-nya
   role      Role     @relation(fields: [roleId], references: [id])
   roleId    Int
+  
+  // Gaji per jam (admin yang set, untuk hitung gaji harian)
+  gajiPerJam Float   @default(0) // Gaji per jam kerja
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   // Relasi ke fitur lain
   gaji              Gaji[]
@@ -55,10 +61,29 @@ model Jadwal {
 
 model Absensi {
   id         Int      @id @default(autoincrement())
-  jamMasuk   DateTime @default(now())
-  jamKeluar  DateTime? // Tanda tanya (?) berarti opsional (nullable)
+  tanggal    DateTime @default(now()) @db.Date // Tanggal absensi
+  shift      String   // "Siang" (09:00-15:00) atau "Sore" (15:00-21:00)
+  
+  jamMasuk   DateTime @default(now()) // Jam aktual masuk kerja
+  jamKeluar  DateTime? // Jam aktual keluar kerja (nullable jika belum clock out)
+  
+  // Jam standar shift (untuk hitung keterlambatan)
+  jamMulaiShift   DateTime // 09:00 untuk Siang, 15:00 untuk Sore
+  jamSelesaiShift DateTime // 15:00 untuk Siang, 21:00 untuk Sore
+  
+  // Perhitungan gaji
+  jamKerja      Float   @default(0) // Total jam kerja actual (jamKeluar - jamMasuk)
+  menitTerlambat Int    @default(0) // Menit terlambat dari jamMulaiShift
+  potonganGaji  Float   @default(0) // Potongan karena telat (jika > 10 menit)
+  totalGaji     Float   @default(0) // Gaji yang didapat (gajiPerJam × jamKerja - potongan)
+  
+  status     String   @default("Hadir") // "Hadir", "Telat", "Alpha"
+  
   user       User     @relation(fields: [userId], references: [id])
   userId     Int
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
 }
 
 // --- MODEL UNTUK FITUR GAJI & PEMASUKAN ---

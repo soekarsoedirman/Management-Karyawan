@@ -1,0 +1,63 @@
+# Dependencies
+node_modules/
+backend/node_modules/
+frontend/ios/Pods/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+backend/.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build outputs
+backend/dist/
+backend/build/
+backend/generated/
+frontend/build/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Prisma
+backend/node_modules/.prisma/
+backend/prisma/migrations/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Flutter
+frontend/.dart_tool/
+frontend/.flutter-plugins
+frontend/.flutter-plugins-dependencies
+frontend/.packages
+frontend/pubspec.lock
+
+# Flutter generated files (auto-generated, should not be committed)
+frontend/**/generated_plugin_registrant.cc
+frontend/**/generated_plugin_registrant.h
+frontend/**/generated_plugin_registrant.dart
+frontend/**/GeneratedPluginRegistrant.swift
+frontend/**/GeneratedPluginRegistrant.m
+frontend/**/generated_plugins.cmake
+frontend/**/ephemeral/
